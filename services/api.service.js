@@ -6,17 +6,31 @@ module.exports = {
 	name: "api",
 	mixins: [ApiGateway],
 
-	// More info about settings: http://moleculer.services/docs/moleculer-web.html
+	// More info about settings: https://moleculer.services/docs/0.13/moleculer-web.html
 	settings: {
 		port: process.env.PORT || 3000,
-
 		routes: [{
-			path: "/",
+			path: "/api",
 			whitelist: [
-				// Access to any actions in all services
-				"*"
+				// Access to any actions in all services under "/api" URL
+				"**"
 			]
-		}]
-
+		}],
+		aliases: {
+			"GET /posts": "posts.getPosts"
+		},
+		// Parse body content
+		bodyParsers: {
+			json: {
+				strict: false
+			},
+			urlencoded: {
+				extended: false
+			}
+		},
+		// Serve assets from "public" folder
+		assets: {
+			folder: "public"
+		}
 	}
 };

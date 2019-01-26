@@ -1,4 +1,3 @@
-
 const Service = require("moleculer").Service;
 import {fetch} from "isomorphic-fetch";
 
@@ -39,10 +38,12 @@ class PostsService extends Service {
 			body: post
 		})
 			.then(response => response.json());
-
-
 	}
-
+	
+	getPosts() {
+		return "You have reached the posts service.";
+	}
+	
 	serviceCreated() {
 		this.logger.info("Posts service created.");
 	}
