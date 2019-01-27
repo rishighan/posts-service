@@ -27,10 +27,6 @@ module.exports = {
 			urlencoded: {
 				extended: false
 			}
-		},
-		// Serve assets from "public" folder
-		assets: {
-			folder: "public"
 		}
 	}
 };

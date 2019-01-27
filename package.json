@@ -18,13 +18,13 @@
     "eslint": "^4.15.0",
     "jest": "^22.0.4",
     "jest-cli": "^22.0.4",
-    "moleculer-repl": "^0.3.0"
+    "moleculer-repl": "^0.5.5"
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
-    "moleculer": "^0.11.0",
+    "moleculer": "^0.13.5",
     "moleculer-db": "^0.7.7",
-    "moleculer-web": "^0.6.0"
+    "moleculer-web": "^0.8.5"
   },
   "engines": {
     "node": ">= 6.x.x"
