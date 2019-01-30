@@ -24,6 +24,7 @@
     "isomorphic-fetch": "^2.2.1",
     "moleculer": "^0.13.5",
     "moleculer-db": "^0.7.7",
+    "moleculer-db-adapter-mongoose": "^0.7.2",
     "moleculer-web": "^0.8.5"
   },
   "engines": {

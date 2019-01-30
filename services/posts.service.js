@@ -1,10 +1,9 @@
-// const Service = require("moleculer").Service;
-// const fetch = require("isomorphic-fetch");
+const DBService = require("../mixins/db.mixin");
 
 module.exports = {
 	name: "posts",
 	version: 1,
-	mixins: [],
+	mixins: [ DBService("posts") ],
 	actions: {
 		getPosts() {
 			return {foo: "boo"};
