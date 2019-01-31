@@ -13,6 +13,15 @@ module.exports = {
 				},
 				params: {
 					post: { type: "string" }
+				},
+				handler(ctx) {
+					let params = {
+						query: { title: "Hackintosh"}
+					};		
+					return this.Promise.resolve()
+						.then(() => {
+							return ctx.call("posts.find", { query: { title: ctx.params.title } });
+						});
 				}
 			}
 	},
