@@ -17,7 +17,7 @@ module.exports = {
 			]
 		}],
 		aliases: {
-			"GET /posts": "posts.getPosts"
+			"GET /posts": "posts.retrieve"
 		},
 		// Parse body content
 		bodyParsers: {

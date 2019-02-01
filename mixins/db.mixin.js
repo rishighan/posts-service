@@ -1,14 +1,14 @@
 const path = require("path");
 const mkdir = require("mkdirp").sync;
 const DbService = require("moleculer-db");
-
+const MongoAdapter = require("moleculer-db-adapter-mongoose");
+const Post = require("../models/post.model");
 module.exports = function(collection) {
-    console.log(process.env.MONGO_URI);
-    if(process.env.MONGO_URI) {
-		const MongoAdapter = require("moleculer-db-adapter-mongoose");
+	if(process.env.MONGO_URI) {
 		return {
 			mixins: [DbService],
-			adapter: MongoAdapter(process.env.MONGO_URI),
+			adapter: new MongoAdapter(process.env.MONGO_URI),
+			model: Post, 
 			collection    
 		};
 	} 
