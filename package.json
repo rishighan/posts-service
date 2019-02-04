@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.11",
     "moleculer": "^0.13.5",
     "moleculer-db": "^0.7.7",
     "moleculer-db-adapter-mongoose": "^0.7.2",

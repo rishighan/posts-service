@@ -13,20 +13,20 @@ module.exports = {
 					keys: ["title", "excerpt", "slug", "content"]
 				},
 				params: {
-					// post: { type: "string" }
+					postId: { type: "string", optional: true },
+					slug: { type: "string", optional: true},
+					title: { type: "string", optional: true }
 				},
 				model: Post,
-				handler(ctx) {
-					let params = {
-						query: { title: "Creatures and Caricatures"}
-					};		
+				handler(broker) {
 					return this.Promise.resolve()
 						.then(() => {
 							// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
-							return ctx.call("v1.posts.find", { query: { title: 'Creatures and Caricatures' } });
+							return broker.call("v1.posts.find", { query: { _id: broker.params.postId } });
 						});
 				}
-			}
+			},
+		create: {}
 	},
 
 	settings: {
