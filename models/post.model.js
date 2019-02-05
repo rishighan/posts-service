@@ -1,4 +1,5 @@
 let mongoose = require("mongoose");
+let paginate = require("mongoose-paginate");
 
 const PostSchema = mongoose.Schema({
 	title: String,
@@ -25,7 +26,9 @@ const PostSchema = mongoose.Schema({
 	excerpt: String,
 });
 
-//indices
+// pagination
+PostSchema.plugin(paginate);
+// indices
 PostSchema.index({
 	date_created: -1,
 	date_updated: -1,

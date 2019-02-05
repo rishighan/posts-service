@@ -1,6 +1,6 @@
 "use strict";
 
-const ApiGateway = require("moleculer-web");
+const ApiGateway = require("moleculer-web");	
 
 module.exports = {
 	name: "api",
@@ -17,7 +17,8 @@ module.exports = {
 			]
 		}],
 		aliases: {
-			"GET /posts/:id": "posts.retrieve"
+			"GET /posts/:id": "posts.retrieve",
+			"GET /posts/:tagName": "posts.findByTagName"
 		},
 		// Parse body content
 		bodyParsers: {

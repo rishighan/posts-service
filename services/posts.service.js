@@ -1,6 +1,5 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
-const _ = require("lodash");
 
 module.exports = {
 	name: "posts",
@@ -9,8 +8,7 @@ module.exports = {
 	actions: {
 		retrieve:
 			{
-				cache: 
-				{
+				cache: {
 					keys: ["title", "excerpt", "slug", "content"]
 				},
 				params: {
@@ -27,7 +25,30 @@ module.exports = {
 						});
 				}
 			},
-		create: {}
+		create: {},
+		findByTagName: {
+			cache: {
+				keys: ["title", "slug", "content"]
+			},
+			params: {
+				tagName: { type: "string" },
+				pageOffset: { type: "string" },
+				pageLimit: { type: "string" }
+			},
+			model: Post,
+			handler(broker) {
+				let querySettings = {
+					sort: { date_updated: -1 },
+					page: parseInt(broker.params.pageOffset, 10) || 1,
+					limit: parseInt(broker.params.pageLimit, 10) || 5
+				};
+				let query = { tags: { $elemMatch: { id: broker.params.tagName } }, is_draft: false, is_archived: false };
+				(async () => {
+					let response = await Post.paginate(query, querySettings);
+					return response;
+				})();
+			}
+		}
 	},
 
 	settings: {
