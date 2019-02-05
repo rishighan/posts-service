@@ -1,5 +1,6 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
+const _ = require("lodash");
 
 module.exports = {
 	name: "posts",
@@ -13,7 +14,7 @@ module.exports = {
 					keys: ["title", "excerpt", "slug", "content"]
 				},
 				params: {
-					postId: { type: "string", optional: true },
+					_id: { type: "string", optional: true },
 					slug: { type: "string", optional: true},
 					title: { type: "string", optional: true }
 				},
@@ -22,7 +23,7 @@ module.exports = {
 					return this.Promise.resolve()
 						.then(() => {
 							// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
-							return broker.call("v1.posts.find", { query: { _id: broker.params.postId } });
+							return broker.call("v1.posts.find", { query: broker.params });
 						});
 				}
 			},
