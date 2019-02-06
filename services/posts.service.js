@@ -44,15 +44,29 @@ module.exports = {
 				};
 				let query = { tags: { $elemMatch: { id: broker.params.tagName } }, is_draft: false, is_archived: false };
 				return new Promise((resolve, reject) => {
-					return Post.paginate(query, options, (error, data) => {
-						if(data){
-							resolve(data.docs[0]);
+					return Post.paginate(query, options, (error, resultSet) => {
+						if(resultSet){
+							resolve(resultSet.docs);
 						} else if(error) {
 							reject(new Error(error));
 						}
 					});
 				});
 			}	
+		},
+		filterPostsByTags: {
+			cache: {
+				keys: ["title", "slug", "content"]
+			},
+			params: {
+				tagNames: { type: "array" }
+			},
+			model: Post,
+			handler(broker) {
+				let queryString = { "tags.id": { $nin: broker.params.tagNames } };
+				return broker.call("v1.posts.find", { query: queryString })
+					.then((data) => data);
+			}
 		}
 	},
 

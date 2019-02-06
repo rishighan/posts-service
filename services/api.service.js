@@ -18,7 +18,8 @@ module.exports = {
 		}],
 		aliases: {
 			"GET /posts/:id": "posts.retrieve",
-			"GET /posts/:tagName": "posts.findByTagName"
+			"GET /posts/:tagName": "posts.findByTagName",
+			"GET /posts/:tagNames": "posts.fiterPostsByTags"
 		},
 		// Parse body content
 		bodyParsers: {
