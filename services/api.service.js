@@ -20,7 +20,8 @@ module.exports = {
 			"GET /posts/:id": "posts.retrieve",
 			"GET /posts/:tagName": "posts.findByTagName",
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
-			"POST /posts/:searchTerm": "posts.searchPost"
+			"POST /posts/:searchTerm": "posts.searchPosts",
+			"GET /posts/getStatistics": "posts.getStatistics"
 		},
 		// Parse body content
 		bodyParsers: {

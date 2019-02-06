@@ -94,6 +94,26 @@ module.exports = {
 					});
 				});
 			}
+		},
+		getStatistics: {
+			cache: {
+				keys: [ "title", "excerpt"]
+			},
+			handler(broker) {
+				let drafts = broker.call("v1.posts.count", { query: { is_draft: true } });
+				let totalPosts = broker.call("v1.posts.count", { query: {} });
+				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { id: "Blog" } } } });
+				return Promise.all([drafts, totalPosts, blogPosts])
+					.then((data) => {
+						return {
+							drafts: data[0],
+							blogPosts: data[2],
+							total: data[1]
+						};	
+					})
+					.catch((error) => error )
+					.finally((response) => response);								
+			}
 		}
 	},
 
