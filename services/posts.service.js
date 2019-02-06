@@ -37,17 +37,22 @@ module.exports = {
 			},
 			model: Post,
 			handler(broker) {
-				let querySettings = {
+				let options = {
 					sort: { date_updated: -1 },
 					page: parseInt(broker.params.pageOffset, 10) || 1,
 					limit: parseInt(broker.params.pageLimit, 10) || 5
 				};
 				let query = { tags: { $elemMatch: { id: broker.params.tagName } }, is_draft: false, is_archived: false };
-				(async () => {
-					let response = await Post.paginate(query, querySettings);
-					return response;
-				})();
-			}
+				return new Promise((resolve, reject) => {
+					return Post.paginate(query, options, (error, data) => {
+						if(data){
+							resolve(data.docs[0]);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
+				});
+			}	
 		}
 	},
 
