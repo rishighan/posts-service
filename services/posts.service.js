@@ -56,7 +56,7 @@ module.exports = {
 		},
 		filterPostsByTags: {
 			cache: {
-				keys: ["title", "slug", "content"]
+				keys: [ "title", "slug", "content" ]
 			},
 			params: {
 				tagNames: { type: "array" }
@@ -66,6 +66,33 @@ module.exports = {
 				let queryString = { "tags.id": { $nin: broker.params.tagNames } };
 				return broker.call("v1.posts.find", { query: queryString })
 					.then((data) => data);
+			}
+		},
+		searchPosts: {
+			cache: {
+				keys: [ "title", "excerpt" ]
+			},
+			params: {
+				searchTerm: { type: "string" },
+				pageOffset: { type: "string" },
+				pageLimit: { type: "string" }
+			},
+			model: Post,
+			handler(broker) {
+				let options = {
+					page: parseInt(broker.params.pageOffset, 10),
+					limit: parseInt(broker.params.pageLimit, 10)
+				};
+				let query = { $text: { $search: broker.params.searchTerm }};
+				return new Promise((resolve, reject) => {
+					return Post.paginate(query, options, (error, resultSet) => {
+						if(resultSet) {
+							resolve(resultSet.docs);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
+				});
 			}
 		}
 	},

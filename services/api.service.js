@@ -19,7 +19,8 @@ module.exports = {
 		aliases: {
 			"GET /posts/:id": "posts.retrieve",
 			"GET /posts/:tagName": "posts.findByTagName",
-			"GET /posts/:tagNames": "posts.fiterPostsByTags"
+			"GET /posts/:tagNames": "posts.fiterPostsByTags",
+			"POST /posts/:searchTerm": "posts.searchPost"
 		},
 		// Parse body content
 		bodyParsers: {
