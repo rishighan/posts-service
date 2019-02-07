@@ -18,11 +18,10 @@ module.exports = {
 				},
 				model: Post,
 				handler(broker) {
-					return this.Promise.resolve()
-						.then(() => {
-							// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
-							return broker.call("v1.posts.find", { query: broker.params });
-						});
+					return new Promise((resolve, reject) => {
+						// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
+						resolve(broker.call("v1.posts.find", { query: broker.params }));
+					}); 
 				}
 			},
 		create: {},
@@ -92,6 +91,16 @@ module.exports = {
 							reject(new Error(error));
 						}
 					});
+				});
+			}
+		},
+		getArchivedPosts: {
+			cache: {
+				keys: ["title"]
+			},
+			handler(broker) {
+				return Promise((resolve, reject) => {
+
 				});
 			}
 		},
