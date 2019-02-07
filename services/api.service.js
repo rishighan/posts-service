@@ -21,7 +21,8 @@ module.exports = {
 			"GET /posts/:tagName": "posts.findByTagName",
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
 			"POST /posts/:searchTerm": "posts.searchPosts",
-			"GET /posts/getStatistics": "posts.getStatistics"
+			"GET /posts/getStatistics": "posts.getStatistics",
+			"GET /posts/getArchivedPosts": "posts.getArchivedPosts"
 		},
 		// Parse body content
 		bodyParsers: {

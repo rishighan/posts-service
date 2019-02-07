@@ -98,9 +98,35 @@ module.exports = {
 			cache: {
 				keys: ["title"]
 			},
-			handler(broker) {
-				return Promise((resolve, reject) => {
-
+			handler() {
+				return new Promise((resolve, reject) => {
+					return Post.aggregate([
+						{
+							$match: {
+								is_archived: true
+							}
+						},
+						{
+							$group: {
+								_id: {
+									year: { $year: "$date_created" },
+									month: { $month: "$date_created" }
+								},
+								archivedPosts: {
+									$push: {
+										title: "$title",
+										slug: "$slug"
+									}
+								}
+							}
+						}],
+					(err, data) => {
+						if (err) {
+							reject(err);
+						}
+						resolve(data);
+					}
+					); 
 				});
 			}
 		},
