@@ -6,25 +6,52 @@ module.exports = {
 	version: 1,
 	mixins: [ DBService("posts") ],
 	actions: {
-		retrieve:
-			{
-				cache: {
-					keys: ["title", "excerpt", "slug", "content"]
-				},
-				params: {
-					_id: { type: "string", optional: true },
-					slug: { type: "string", optional: true},
-					title: { type: "string", optional: true }
-				},
-				model: Post,
-				handler(broker) {
-					return new Promise((resolve, reject) => {
-						// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
-						resolve(broker.call("v1.posts.find", { query: broker.params }));
-					}); 
-				}
+		retrieve:{
+			cache: {
+				keys: ["title", "excerpt", "slug", "content"]
 			},
-		create: {},
+			params: {
+				_id: { type: "string", optional: true },
+				slug: { type: "string", optional: true},
+				title: { type: "string", optional: true }
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
+					resolve(broker.call("v1.posts.find", { query: broker.params }));
+				}); 
+			}
+		},
+		create: {
+			cache: {
+				keys: []
+			},
+			params: {
+				title: { type: "string" },
+				slug: { type: "string" },
+				tags: { type: "array", optional: true },  
+				date_created: { type: "string" },
+				date_updated: { type: "string" },
+				attachment: { type: "array", optional: true },
+				is_draft: { type: "boolean" },
+				is_sticky: { type: "boolean" }, // <- TODO
+				is_archived: { type: "boolean" },
+				content: { type: "string", optional: true },
+				excerpt: { type: "string" },
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					Post.create(broker.params, (error, data) => {
+						if(data) {
+							resolve(data);
+						} else if (error) {
+							reject(new Error(error));
+						}
+					});
+				});
+			}
+
+		},
 		findByTagName: {
 			cache: {
 				keys: ["title", "slug", "content"]
@@ -34,7 +61,6 @@ module.exports = {
 				pageOffset: { type: "string" },
 				pageLimit: { type: "string" }
 			},
-			model: Post,
 			handler(broker) {
 				let options = {
 					sort: { date_updated: -1 },
@@ -60,7 +86,6 @@ module.exports = {
 			params: {
 				tagNames: { type: "array" }
 			},
-			model: Post,
 			handler(broker) {
 				let queryString = { "tags.id": { $nin: broker.params.tagNames } };
 				return broker.call("v1.posts.find", { query: queryString })
@@ -76,7 +101,6 @@ module.exports = {
 				pageOffset: { type: "string" },
 				pageLimit: { type: "string" }
 			},
-			model: Post,
 			handler(broker) {
 				let options = {
 					page: parseInt(broker.params.pageOffset, 10),
@@ -153,6 +177,7 @@ module.exports = {
 	},
 
 	settings: {
+		model: Post,
 		fields: ["_id", "slug", "tags", "date_created", "date_updated", "attachment", "is_sticky", "is_archived", "is_draft", "content", "excerpt"],
 		entityValidator: {
 			title: {type: "string", min: 1},
