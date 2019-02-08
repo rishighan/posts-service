@@ -30,8 +30,6 @@ module.exports = {
 				title: { type: "string" },
 				slug: { type: "string" },
 				tags: { type: "array", optional: true },  
-				date_created: { type: "string" },
-				date_updated: { type: "string" },
 				attachment: { type: "array", optional: true },
 				is_draft: { type: "boolean" },
 				is_sticky: { type: "boolean" }, // <- TODO
@@ -40,8 +38,12 @@ module.exports = {
 				excerpt: { type: "string" },
 			},
 			handler(broker) {
+				let postData = Object.assign({
+					date_created: new Date(),
+					date_updated: new Date()
+				}, broker.params);
 				return new Promise((resolve, reject) => {
-					Post.create(broker.params, (error, data) => {
+					Post.create(postData, (error, data) => {
 						if(data) {
 							resolve(data);
 						} else if (error) {
@@ -163,20 +165,19 @@ module.exports = {
 				slug: { type: "string" },
 				tags: { type: "array", optional: true },  
 				date_created: { type: "string" },
-				date_updated: { type: "string" },
 				attachment: { type: "array", optional: true },
 				is_draft: { type: "boolean" },
 				is_sticky: { type: "boolean" }, // <- TODO
 				is_archived: { type: "boolean" },
 				content: { type: "string", optional: true },
 				excerpt: { type: "string" },
-				upsertValue: {type: "object", optional: true }
+				upsertValue: {type: "boolean" }
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					console.log(broker.params)
+					console.log(broker.params.postId)
 					return Post.updateOne({
-						_id: broker.params.id
+						_id: broker.params.postId
 					}, 
 					{
 						$set: 

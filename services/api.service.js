@@ -18,6 +18,7 @@ module.exports = {
 		}],
 		aliases: {
 			"POST /posts/create": "posts.create",
+			"POST /posts/update": "posts.update",
 			"GET /posts/:id": "posts.retrieve",
 			"GET /posts/:tagName": "posts.findByTagName",
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
