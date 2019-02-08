@@ -6,22 +6,6 @@ module.exports = {
 	version: 1,
 	mixins: [ DBService("posts") ],
 	actions: {
-		retrieve:{
-			cache: {
-				keys: ["title", "excerpt", "slug", "content"]
-			},
-			params: {
-				_id: { type: "string", optional: true },
-				slug: { type: "string", optional: true},
-				title: { type: "string", optional: true }
-			},
-			handler(broker) {
-				return new Promise((resolve, reject) => {
-					// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
-					resolve(broker.call("v1.posts.find", { query: broker.params }));
-				}); 
-			}
-		},
 		create: {
 			cache: {
 				keys: []
@@ -53,6 +37,22 @@ module.exports = {
 				});
 			}
 
+		},
+		retrieve:{
+			cache: {
+				keys: ["title", "excerpt", "slug", "content"]
+			},
+			params: {
+				_id: { type: "string", optional: true },
+				slug: { type: "string", optional: true},
+				title: { type: "string", optional: true }
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
+					resolve(broker.call("v1.posts.find", { query: broker.params }));
+				}); 
+			}
 		},
 		findByTagName: {
 			cache: {
@@ -122,7 +122,7 @@ module.exports = {
 		},
 		getArchivedPosts: {
 			cache: {
-				keys: ["title"]
+				keys: ["title", "slug"]
 			},
 			handler() {
 				return new Promise((resolve, reject) => {
@@ -156,6 +156,27 @@ module.exports = {
 				});
 			}
 		},
+		
+		getStatistics: {
+			cache: {
+				keys: [ "title", "excerpt"]
+			},
+			handler(broker) {
+				let drafts = broker.call("v1.posts.count", { query: { is_draft: true } });
+				let totalPosts = broker.call("v1.posts.count", { query: {} });
+				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { id: "Blog" } } } });
+				return Promise.all([drafts, totalPosts, blogPosts])
+					.then((data) => {
+						return {
+							drafts: data[0],
+							blogPosts: data[2],
+							total: data[1]
+						};	
+					})
+					.catch((error) => error )
+					.finally((response) => response);								
+			}
+		},
 		update: {
 			cache: {
 				keys: ["title", "content", "excerpt", "tags", "attachment"]
@@ -175,7 +196,6 @@ module.exports = {
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					console.log(broker.params.postId)
 					return Post.updateOne({
 						_id: broker.params.postId
 					}, 
@@ -207,28 +227,24 @@ module.exports = {
 				});
 			}
 		},
-		getStatistics: {
-			cache: {
-				keys: [ "title", "excerpt"]
+		delete: {
+			cache: {},
+			params: {
+				postId: { type: "string" }
 			},
 			handler(broker) {
-				let drafts = broker.call("v1.posts.count", { query: { is_draft: true } });
-				let totalPosts = broker.call("v1.posts.count", { query: {} });
-				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { id: "Blog" } } } });
-				return Promise.all([drafts, totalPosts, blogPosts])
-					.then((data) => {
-						return {
-							drafts: data[0],
-							blogPosts: data[2],
-							total: data[1]
-						};	
-					})
-					.catch((error) => error )
-					.finally((response) => response);								
+				return new Promise((resolve, reject) => {
+					return Post.findByIdAndDelete(broker.params.postId, (error, data) => {
+						if(data) {
+							resolve(data);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
+				});
 			}
 		}
 	},
-
 	settings: {
 		model: Post,
 		fields: ["_id", "slug", "tags", "date_created", "date_updated", "attachment", "is_sticky", "is_archived", "is_draft", "content", "excerpt"],

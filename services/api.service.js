@@ -18,13 +18,14 @@ module.exports = {
 		}],
 		aliases: {
 			"POST /posts/create": "posts.create",
-			"POST /posts/update": "posts.update",
 			"GET /posts/:id": "posts.retrieve",
+			"POST /posts/update": "posts.update",
 			"GET /posts/:tagName": "posts.findByTagName",
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
 			"POST /posts/:searchTerm": "posts.searchPosts",
 			"GET /posts/getStatistics": "posts.getStatistics",
-			"GET /posts/getArchivedPosts": "posts.getArchivedPosts"
+			"GET /posts/getArchivedPosts": "posts.getArchivedPosts",
+			"POST /posts/delete": "posts.delete"
 		},
 		// Parse body content
 		bodyParsers: {
