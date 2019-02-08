@@ -154,6 +154,58 @@ module.exports = {
 				});
 			}
 		},
+		update: {
+			cache: {
+				keys: ["title", "content", "excerpt", "tags", "attachment"]
+			},
+			params: {
+				title: { type: "string" },
+				slug: { type: "string" },
+				tags: { type: "array", optional: true },  
+				date_created: { type: "string" },
+				date_updated: { type: "string" },
+				attachment: { type: "array", optional: true },
+				is_draft: { type: "boolean" },
+				is_sticky: { type: "boolean" }, // <- TODO
+				is_archived: { type: "boolean" },
+				content: { type: "string", optional: true },
+				excerpt: { type: "string" },
+				upsertValue: {type: "object", optional: true }
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					console.log(broker.params)
+					return Post.updateOne({
+						_id: broker.params.id
+					}, 
+					{
+						$set: 
+						{
+							title: broker.params.title,
+							slug: broker.params.slug,
+							tags: broker.params.tags,
+							date_created: broker.params.date_created,
+							date_updated: new Date(),
+							attachment: broker.params.attachment,
+							is_draft: broker.params.is_draft,
+							is_archived: broker.params.is_archived,
+							content: broker.params.content,
+							excerpt: broker.params.excerpt
+						}
+					},
+					{ 
+						upsert: broker.params.upsertValue 
+					},
+					(error, data) => {
+						if(data) {
+							resolve(data);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
+				});
+			}
+		},
 		getStatistics: {
 			cache: {
 				keys: [ "title", "excerpt"]
