@@ -49,8 +49,13 @@ module.exports = {
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					// "find" is a method on the service, not the mongoose adapter, so... thanks moleculer?
-					resolve(broker.call("v1.posts.find", { query: broker.params }));
+					Post.find(broker.params, (error, data) => {
+						if(data) {
+							resolve(data);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
 				}); 
 			}
 		},
