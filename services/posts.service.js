@@ -65,8 +65,8 @@ module.exports = {
 			},
 			params: {
 				tagName: { type: "string" },
-				pageOffset: { type: "string" },
-				pageLimit: { type: "string" }
+				pageOffset: { type: "string", optional: true },
+				pageLimit: { type: "string", optional: true }
 			},
 			handler(broker) {
 				let options = {
