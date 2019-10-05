@@ -1,5 +1,6 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
+const _ = require('lodash');
 
 module.exports = {
 	name: "posts",
@@ -45,13 +46,28 @@ module.exports = {
 			params: {
 				_id: { type: "string", optional: true },
 				slug: { type: "string", optional: true},
-				title: { type: "string", optional: true }
+				title: { type: "string", optional: true },
+				pageOffset: { type: "string", optional: true},
+				pageLimit: { type: "string", optional: true},
 			},
 			handler(broker) {
+				const queryConfig = {
+					_id: broker.params._id,
+					slug: broker.params.slug,
+					title: broker.params.title,
+				};
+				const queryKey = _.findKey(queryConfig, (val) => val !== undefined);
+				const query = {};
+				query[queryKey] = queryConfig[queryKey];
+
+				const pagingOptions = {
+					pageLimit: broker.params.pageLimit,
+					pageOffset: broker.params.pageOffset,
+				};
 				return new Promise((resolve, reject) => {
-					Post.find(broker.params, (error, data) => {
-						if(data) {
-							resolve(data);
+					Post.paginate(query, pagingOptions, (error, resultSet) => {
+						if(resultSet) {
+							resolve(resultSet.docs);
 						} else if(error) {
 							reject(new Error(error));
 						}
