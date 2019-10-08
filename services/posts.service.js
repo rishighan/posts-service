@@ -51,6 +51,7 @@ module.exports = {
 				pageLimit: { type: "string", optional: true},
 			},
 			handler(broker) {
+				console.log(broker.params);
 				const queryConfig = {
 					_id: broker.params._id,
 					slug: broker.params.slug,
@@ -61,13 +62,13 @@ module.exports = {
 				query[queryKey] = queryConfig[queryKey];
 
 				const pagingOptions = {
-					pageLimit: broker.params.pageLimit,
-					pageOffset: broker.params.pageOffset,
+					limit: parseInt(broker.params.pageLimit, 10),
+					page: parseInt(broker.params.pageOffset, 10),
 				};
 				return new Promise((resolve, reject) => {
-					Post.paginate(query, pagingOptions, (error, resultSet) => {
+					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if(resultSet) {
-							resolve(resultSet.docs);
+							resolve(resultSet);
 						} else if(error) {
 							reject(new Error(error));
 						}
@@ -133,7 +134,7 @@ module.exports = {
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, options, (error, resultSet) => {
 						if(resultSet) {
-							resolve(resultSet.docs);
+							resolve(resultSet);
 						} else if(error) {
 							reject(new Error(error));
 						}
