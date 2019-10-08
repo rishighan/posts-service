@@ -18,14 +18,14 @@
     "eslint": "^4.15.0",
     "jest": "^24.7.1",
     "jest-cli": "^24.7.1",
-    "moleculer-repl": "^0.5.7"
+    "moleculer-repl": "^0.6.1"
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "moleculer": "^0.13.5",
-    "moleculer-db": "^0.7.7",
-    "moleculer-db-adapter-mongoose": "^0.7.2",
+    "moleculer-db": "^0.8.2",
+    "moleculer-db-adapter-mongoose": "^0.8.2",
     "moleculer-web": "^0.8.5",
     "mongoose": "^5.4.8",
     "mongoose-paginate": "^5.0.3"
