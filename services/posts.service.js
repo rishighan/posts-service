@@ -76,6 +76,27 @@ module.exports = {
 				});
 			}
 		},
+		retrieveOne: {
+			cache: {
+				keys: [],
+			},
+			params: {
+				_id: { type: "string", optional: true },
+				slug: { type: "string", optional: true },
+				title: { type: "string", optional: true },
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					return Post.findOne(broker.params, (error, result) => {
+						if(result){
+							resolve(result);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
+				});
+			}
+		},
 		findByTagName: {
 			cache: {
 				keys: ["title", "slug", "content"]
@@ -88,7 +109,7 @@ module.exports = {
 			handler(broker) {
 				let pagingOptions = {
 					sort: { date_updated: -1 },
-					page: parseInt(broker.params.pageOffset, 10) || 0, 
+					page: parseInt(broker.params.pageOffset, 10) || 0,
 					limit: parseInt(broker.params.pageLimit, 10) || Infinity,
 				};
 				let query = { tags: { $elemMatch: { id: broker.params.tagName } }, is_draft: false, is_archived: false };
