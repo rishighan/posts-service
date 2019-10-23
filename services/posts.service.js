@@ -1,6 +1,6 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
-const _ = require('lodash');
+const _ = require("lodash");
 
 module.exports = {
 	name: "posts",
@@ -64,7 +64,6 @@ module.exports = {
 					limit: parseInt(broker.params.pageLimit, 10),
 					page: parseInt(broker.params.pageOffset, 10),
 				};
-				console.log(query)
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
@@ -189,12 +188,12 @@ module.exports = {
 								}
 							}
 						}],
-						(err, data) => {
-							if (err) {
-								reject(err);
-							}
-							resolve(data);
+					(err, data) => {
+						if (err) {
+							reject(err);
 						}
+						resolve(data);
+					}
 					);
 				});
 			}
@@ -242,8 +241,8 @@ module.exports = {
 					return Post.updateOne({
 						_id: broker.params.postId
 					},
-						{
-							$set:
+					{
+						$set:
 							{
 								title: broker.params.title,
 								slug: broker.params.slug,
@@ -256,17 +255,17 @@ module.exports = {
 								content: broker.params.content,
 								excerpt: broker.params.excerpt
 							}
-						},
-						{
-							upsert: broker.params.upsertValue
-						},
-						(error, data) => {
-							if (data) {
-								resolve(data);
-							} else if (error) {
-								reject(new Error(error));
-							}
-						});
+					},
+					{
+						upsert: broker.params.upsertValue
+					},
+					(error, data) => {
+						if (data) {
+							resolve(data);
+						} else if (error) {
+							reject(new Error(error));
+						}
+					});
 				});
 			}
 		},
