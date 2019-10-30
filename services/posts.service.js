@@ -188,12 +188,12 @@ module.exports = {
 								}
 							}
 						}],
-						(err, data) => {
-							if (err) {
-								reject(err);
-							}
-							resolve(data);
+					(err, data) => {
+						if (err) {
+							reject(err);
 						}
+						resolve(data);
+					}
 					);
 				});
 			}
@@ -250,8 +250,8 @@ module.exports = {
 					return Post.updateOne({
 						_id: broker.params.postId
 					},
-						{
-							$set:
+					{
+						$set:
 							{
 								title: broker.params.title,
 								slug: broker.params.slug,
@@ -264,17 +264,17 @@ module.exports = {
 								content: broker.params.content,
 								excerpt: broker.params.excerpt
 							}
-						},
-						{
-							upsert: broker.params.upsertValue
-						},
-						(error, data) => {
-							if (data) {
-								resolve(data);
-							} else if (error) {
-								reject(new Error(error));
-							}
-						});
+					},
+					{
+						upsert: broker.params.upsertValue
+					},
+					(error, data) => {
+						if (data) {
+							resolve(data);
+						} else if (error) {
+							reject(new Error(error));
+						}
+					});
 				});
 			}
 		},
