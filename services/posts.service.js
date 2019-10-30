@@ -210,9 +210,18 @@ module.exports = {
 				return Promise.all([drafts, totalPosts, blogPosts])
 					.then((data) => {
 						return {
-							drafts: data[0],
-							blogPosts: data[2],
-							total: data[1]
+							drafts: {
+								key: "Drafts",
+								count: data[0],
+							},
+							blogPosts: {
+								key: "Blog Posts",
+								count: data[2],
+							},
+							total: {
+								key: "Total",
+								count: data[1],
+							}
 						};
 					})
 					.catch((error) => error)
