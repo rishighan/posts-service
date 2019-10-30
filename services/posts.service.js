@@ -87,9 +87,9 @@ module.exports = {
 			handler(broker) {
 				return new Promise((resolve, reject) => {
 					return Post.findOne(broker.params, (error, result) => {
-						if(result){
+						if (result) {
 							resolve(result);
-						} else if(error) {
+						} else if (error) {
 							reject(new Error(error));
 						}
 					});
@@ -188,12 +188,12 @@ module.exports = {
 								}
 							}
 						}],
-					(err, data) => {
-						if (err) {
-							reject(err);
+						(err, data) => {
+							if (err) {
+								reject(err);
+							}
+							resolve(data);
 						}
-						resolve(data);
-					}
 					);
 				});
 			}
@@ -209,20 +209,20 @@ module.exports = {
 				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { id: "Blog" } } } });
 				return Promise.all([drafts, totalPosts, blogPosts])
 					.then((data) => {
-						return {
-							drafts: {
+						return [
+							{
 								key: "Drafts",
 								count: data[0],
 							},
-							blogPosts: {
+							{
 								key: "Blog Posts",
 								count: data[2],
 							},
-							total: {
+							{
 								key: "Total",
 								count: data[1],
 							}
-						};
+						];
 					})
 					.catch((error) => error)
 					.finally((response) => response);
@@ -250,8 +250,8 @@ module.exports = {
 					return Post.updateOne({
 						_id: broker.params.postId
 					},
-					{
-						$set:
+						{
+							$set:
 							{
 								title: broker.params.title,
 								slug: broker.params.slug,
@@ -264,17 +264,17 @@ module.exports = {
 								content: broker.params.content,
 								excerpt: broker.params.excerpt
 							}
-					},
-					{
-						upsert: broker.params.upsertValue
-					},
-					(error, data) => {
-						if (data) {
-							resolve(data);
-						} else if (error) {
-							reject(new Error(error));
-						}
-					});
+						},
+						{
+							upsert: broker.params.upsertValue
+						},
+						(error, data) => {
+							if (data) {
+								resolve(data);
+							} else if (error) {
+								reject(new Error(error));
+							}
+						});
 				});
 			}
 		},
