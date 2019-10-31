@@ -198,7 +198,26 @@ module.exports = {
 				});
 			}
 		},
-
+		getDrafts: {
+			cache: {
+				keys: ["title", "excerpt"],
+			},
+			handler(context) {
+				const options = {
+					page: parseInt(context.params.pageOffset, 10),
+					limit: parseInt(context.params.pageLimit, 10)
+				};
+				const query = { is_draft: true };
+				return new Promise((resolve, reject) => {
+					return Post.paginate(query, options, (error, resultSet) => {
+						if (error) {
+							reject(new Error(error));
+						}
+						resolve(resultSet);
+					});
+				});
+			}
+		},
 		getStatistics: {
 			cache: {
 				keys: ["title", "excerpt"]
