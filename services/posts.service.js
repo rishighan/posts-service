@@ -183,7 +183,8 @@ module.exports = {
 								archivedPosts: {
 									$push: {
 										title: "$title",
-										slug: "$slug"
+										slug: "$slug",
+										date_updated: "$date_updated",
 									}
 								}
 							}
