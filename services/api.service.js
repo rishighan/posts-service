@@ -20,6 +20,7 @@ module.exports = {
 			"POST /posts/create": "posts.create",
 			"GET /posts/retrieve": "posts.retrieve",
 			"GET /posts/retrieveOne": "posts.retrieveOne",
+			"GET /posts/getDrafts" : "posts.getDrafts",
 			"POST /posts/update": "posts.update",
 			"GET /posts/:tagName": "posts.findByTagName",
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
