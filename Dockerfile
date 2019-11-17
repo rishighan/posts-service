@@ -1,13 +1,18 @@
-FROM node:8
+FROM node:current-alpine
 
-ENV MONGO_URI="mongodb://localhost"
-RUN mkdir /posts-services
-WORKDIR /posts-services
+ENV NODE_ENV=production
 
-COPY package.json .
+RUN mkdir /posts-service
+WORKDIR /posts-service
 
-RUN npm install --production
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh
+
+COPY package.json package-lock.json ./
+RUN  npm install
 
 COPY . .
-EXPOSE 3000
+
+RUN adduser -D myuser
+USER myuser
 CMD ["npm", "start"]
