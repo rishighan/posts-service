@@ -2,6 +2,7 @@ const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
 const _ = require("lodash");
 
+console.log(DBService("posts"));
 module.exports = {
 	name: "posts",
 	version: 1,

@@ -3,13 +3,15 @@ version: "3.2"
 services:
   posts-api:
     build:
-      context: ./
+      context: .
     image: frishi/posts-service-api
     container_name: posts-service-api
     env_file: docker-compose.env
     environment:
       SERVICES: posts-api
       PORT: 5000
+    depends_on: 
+      - mongo
     external_links:
       - nats
       - traefik
@@ -21,23 +23,39 @@ services:
       - "traefik.frontend.rule=PathPrefix:/"
     networks:
       - internal
+      - analytics-service_internal
 
   posts:
     build:
-      context: ./
+      context: .
     image: frishi/posts-service
     container_name: posts-service
     env_file: docker-compose.env
     environment:
-      SERVICES: posts 
+      SERVICES: posts
+    depends_on: 
+      - mongo
     labels:
       - "traefik.enable=false"
     external_links:
       - nats
       - redis
-      - traefik
+    networks:
+      - internal
+      - analytics-service_internal
+  
+  mongo:
+    image: mongo
+    container_name: db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /usr/local/var/mongodb/:/data/db
     networks:
       - internal
 
 networks:
   internal:
+  analytics-service_internal:
+    external: true
