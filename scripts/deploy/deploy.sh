@@ -2,10 +2,10 @@
 # Rishi Ghan
 # Deployment script for a microservice
 
-# usage: ./deploy.sh -d [configuration directory]
-#                    -s [service name]
+# usage: ./deploy.sh -s [service name]
 #                    -h [hostname]
 #                    -u [username]
+#                    -r [repository base url to the raw text content]
 
 # Emojis
 CLIPBOARD="📋"
@@ -24,14 +24,12 @@ StrictHostKeyChecking no
 EOF
 
 # params
-directory_name=''
 service_name=''
 hostname=''
 username=''
 
 while getopts 'd:s:h:u:r:' flag; do
     case "${flag}" in
-        d) directory_name="${OPTARG}" ;;
         s) service_name="${OPTARG}" ;;
         h) hostname="${OPTARG}" ;;
         u) username="${OPTARG}" ;;
@@ -44,21 +42,24 @@ done
 printf "$CLIPBOARD Attempting to create configuration folder...\n"
 
 ssh "$username@$hostname" /bin/bash << EOF
-if [ ! -d "$directory_name" ]
+if [ ! -d "$service_name" ]
 then
     printf "\n$CLIPBOARD Directory doesn't exist. Creating now...\n"
-    mkdir "$directory_name"
-    printf "$directory_name created."
+    mkdir "$service_name"
+    printf "$service_name created."
 else
-    printf "\n$RENAME  $directory_name already exists. Removing and recreating...\n"
-    rm -Rf "$directory_name"
-    mkdir "$directory_name"
+    printf "\n$RENAME  $service_name already exists. Removing and recreating...\n"
+    rm -Rf "$service_name"
+    mkdir "$service_name"
     printf "$CHECKMARK Done.\n"
 fi
-    printf "\n$CLIPBOARD Changing directory to $directory_name...\n"
-    cd "$directory_name"
+    printf "\n$CLIPBOARD Changing directory to $service_name...\n"
+    cd "$service_name"
 
-    printf "$DOWNLOAD Downloading the docker-compose configuration for Analytics Service...\n\n"
+    printf "\n$SCISSORS  Pruning Docker images, networks and volumes...\n\n"
+    docker system prune -f
+
+    printf "$DOWNLOAD Downloading the docker-compose configuration for Posts Service...\n\n"
     printf "$repository_base_url\n\n"
     curl "$repository_base_url"/Dockerfile --output Dockerfile
     curl "$repository_base_url"/docker-compose.yml --output docker-compose.yml

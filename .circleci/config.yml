@@ -43,7 +43,6 @@ jobs:
             # deploy script 
             bash ./scripts/deploy/deploy.sh -u $DIGITALOCEAN_USERNAME \
                                             -h $DIGITALOCEAN_HOST \
-                                            -d posts_services_config \
-                                            -s SERVICE_NAME \
+                                            -s $SERVICE_NAME \
                                             -r $REPOSITORY_BASE_URL 
       
