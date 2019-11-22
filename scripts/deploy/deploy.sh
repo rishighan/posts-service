@@ -58,9 +58,6 @@ fi
     printf "\n$CLIPBOARD Changing directory to $directory_name...\n"
     cd "$directory_name"
 
-    printf "\n$SCISSORS  Pruning Docker images, networks and volumes...\n\n"
-    docker system prune -f
-
     printf "$DOWNLOAD Downloading the docker-compose configuration for Analytics Service...\n\n"
     printf "$repository_base_url\n\n"
     curl "$repository_base_url"/Dockerfile --output Dockerfile
