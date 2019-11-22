@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Deploy to Digital Ocean Droplet
           command: |
-            # example
+            # deploy script 
             bash ./scripts/deploy/deploy.sh -u $DIGITALOCEAN_USERNAME \
                                             -h $DIGITALOCEAN_HOST \
                                             -d analytics_service_config \
