@@ -22,8 +22,7 @@ services:
       - "traefik.frontend.entryPoints=http"
       - "traefik.frontend.rule=PathPrefix:/"
     networks:
-      - internal
-      - analytics-service_internal
+      - analytics-service_rgnetwork
 
   posts:
     build:
@@ -43,8 +42,7 @@ services:
       - nats
       - redis
     networks:
-      - internal
-      - analytics-service_internal
+      - analytics-service_rgnetwork
   
   mongo:
     image: mongo
@@ -55,9 +53,8 @@ services:
     volumes:
       - /usr/local/var/mongodb/:/data/db
     networks:
-      - internal
+      - analytics-service_rgnetwork 
 
 networks:
-  internal:
-  analytics-service_internal:
+  analytics-service_rgnetwork:
     external: true
