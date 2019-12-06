@@ -16,14 +16,12 @@ services:
       - nats
       - traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.backend=posts-api"
-      - "traefik.port=3000"
-      - "traefik.frontend.entryPoints=http"
-      - "traefik.frontend.rule=PathPrefix:/"
+      - traefik.http.services.posts-api.loadbalancer.server.port=5000
+      - traefik.enable=true
+      - traefik.docker.network=rgnetwork
+      - traefik.http.routers.posts-api.rule=Host(`services.rishighan.com`) && PathPrefix(`/`)
     networks:
-      - internal
-      - analytics-service_internal
+      - rgnetwork 
 
   posts:
     build:
@@ -38,13 +36,12 @@ services:
     depends_on: 
       - mongo
     labels:
-      - "traefik.enable=false"
+      - traefik.enable=false
     external_links:
       - nats
       - redis
     networks:
-      - internal
-      - analytics-service_internal
+      - rgnetwork 
   
   mongo:
     image: mongo
@@ -54,10 +51,11 @@ services:
       - "27017:27017"
     volumes:
       - /usr/local/var/mongodb/:/data/db
+    labels:
+      - traefik.enable=false
     networks:
-      - internal
+      - rgnetwork
 
 networks:
-  internal:
-  analytics-service_internal:
+  rgnetwork:
     external: true
