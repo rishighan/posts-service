@@ -14,7 +14,6 @@ services:
       - mongo
     external_links:
       - nats
-      - traefik
     labels:
       - traefik.http.services.posts-api.loadbalancer.server.port=5000
       - traefik.enable=true
