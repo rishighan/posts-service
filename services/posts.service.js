@@ -249,6 +249,9 @@ module.exports = {
 					.finally((response) => response);
 			}
 		},
+		getDiffHistories: {
+			
+		},
 		update: {
 			cache: {
 				keys: ["title", "content", "excerpt", "tags", "attachment"]

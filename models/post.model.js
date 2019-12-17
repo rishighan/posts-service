@@ -1,4 +1,5 @@
 let mongoose = require("mongoose");
+const diffHistory = require("mongoose-diff-history/diffHistory");
 let paginate = require("mongoose-paginate");
 
 const PostSchema = mongoose.Schema({
@@ -28,6 +29,10 @@ const PostSchema = mongoose.Schema({
 
 // pagination
 PostSchema.plugin(paginate);
+
+// diff history
+PostSchema.plugin(diffHistory);
+
 // indices
 PostSchema.index({
 	date_created: -1,

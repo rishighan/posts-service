@@ -26,6 +26,7 @@ module.exports = {
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
 			"POST /posts/:searchTerm": "posts.searchPosts",
 			"GET /posts/getStatistics": "posts.getStatistics",
+			"GET /posts/getDiffHistories": "posts.getDiffHistories",
 			"GET /posts/getArchivedPosts": "posts.getArchivedPosts",
 			"POST /posts/delete": "posts.delete"
 		},
