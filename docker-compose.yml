@@ -27,8 +27,6 @@ services:
       - traefik.http.routers.posts-api.rule=Host(`services.rishighan.com`) && PathPrefix(`/api/v1/posts/`)
       - traefik.http.routers.posts-api.entrypoints=websecure
       - traefik.http.routers.posts-api.tls=true
-      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
-      - traefik.http.routers.posts-api.middlewares=https_redirect
       - traefik.http.routers.posts-api.tls.certresolver=le
     networks:
       - gateway 
