@@ -12,18 +12,13 @@ services:
       PORT: 5000
     depends_on: 
       - mongo
-    ports:
-      - "5000:5000"
     external_links:
       - nats
-      - traefik
     labels:
-      - traefik.http.routers.posts-api.service=posts-api@docker
       - traefik.http.services.posts-api.loadbalancer.server.port=5000
       - traefik.enable=true
       - traefik.docker.network=gateway
-      # - traefik.http.routers.posts-api.rule=Host(`localhost`) && PathPrefix(`/api/v1/posts/`)
-      # for prod
+      - traefik.http.routers.posts-api.service=posts-api@docker
       - traefik.http.routers.posts-api.rule=Host(`services.rishighan.com`) && PathPrefix(`/api/v1/posts/`)
     networks:
       - gateway 
