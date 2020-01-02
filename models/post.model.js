@@ -31,7 +31,7 @@ const PostSchema = mongoose.Schema({
 PostSchema.plugin(paginate);
 
 // diff history
-PostSchema.plugin(diffHistory);
+PostSchema.plugin(diffHistory.plugin);
 
 // indices
 PostSchema.index({
