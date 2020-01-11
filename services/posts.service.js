@@ -263,7 +263,7 @@ module.exports = {
 				date_created: { type: "string" },
 				attachment: { type: "array", optional: true },
 				is_draft: { type: "boolean" },
-				is_sticky: { type: "boolean" }, // <- TODO
+				is_sticky: { type: "boolean" },
 				is_archived: { type: "boolean" },
 				content: { type: "string", optional: true },
 				excerpt: { type: "string" },
@@ -271,6 +271,7 @@ module.exports = {
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
+					console.log(broker.params)
 					return Post.updateOne({
 						_id: broker.params.postId
 					},
@@ -285,6 +286,7 @@ module.exports = {
 								attachment: broker.params.attachment,
 								is_draft: broker.params.is_draft,
 								is_archived: broker.params.is_archived,
+								is_sticky: broker.params.is_sticky,
 								content: broker.params.content,
 								excerpt: broker.params.excerpt
 							}
