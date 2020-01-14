@@ -1,5 +1,6 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
+const diffHistory = require("mongoose-diff-history/diffHistory");
 const _ = require("lodash");
 
 console.log(DBService("posts"));
@@ -249,9 +250,16 @@ module.exports = {
 					.finally((response) => response);
 			}
 		},
-		// getDiffHistories: {
-			
-		// },
+		getDiffHistories: {
+			params: {
+				postId: { type: "string" },
+			},
+			handler(context) {
+				return diffHistory.getHistories("Post", context.params.postId)
+					.then(histories => histories)
+					.catch(error => error);	
+			}
+		},
 		update: {
 			cache: {
 				keys: ["title", "content", "excerpt", "tags", "attachment"]
@@ -271,7 +279,7 @@ module.exports = {
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					console.log(broker.params)
+					console.log(broker.params);
 					return Post.updateOne({
 						_id: broker.params.postId
 					},
