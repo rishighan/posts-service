@@ -255,7 +255,7 @@ module.exports = {
 				postId: { type: "string" },
 			},
 			handler(context) {
-				return diffHistory.getHistories("Post", context.params.postId)
+				return diffHistory.getDiffs("Post", context.params.postId)
 					.then(histories => histories)
 					.catch(error => error);	
 			}
