@@ -113,7 +113,7 @@ module.exports = {
 					page: parseInt(broker.params.pageOffset, 10) || 0,
 					limit: parseInt(broker.params.pageLimit, 10) || Infinity,
 				};
-				let query = { tags: { $elemMatch: { id: broker.params.tagName } }, is_draft: false, is_archived: false };
+				let query = { tags: { $elemMatch: { value: broker.params.tagName } }, is_draft: false, is_archived: false };
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
@@ -133,7 +133,7 @@ module.exports = {
 				tagNames: { type: "array" }
 			},
 			handler(broker) {
-				let queryString = { "tags.id": { $nin: broker.params.tagNames } };
+				let queryString = { "tags.value": { $nin: broker.params.tagNames } };
 				return broker.call("v1.posts.find", { query: queryString })
 					.then((data) => data);
 			}
@@ -254,10 +254,14 @@ module.exports = {
 			params: {
 				postId: { type: "string" },
 			},
-			handler(context) {
-				return diffHistory.getDiffs("Post", context.params.postId)
-					.then(histories => histories)
-					.catch(error => error);	
+			async handler(context) {
+				try {
+					const histories = await diffHistory.getDiffs("Post", context.params.postId);
+					return histories;
+				}
+				catch (error) {
+					return error;
+				}	
 			}
 		},
 		update: {
