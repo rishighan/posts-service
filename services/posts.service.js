@@ -69,6 +69,8 @@ module.exports = {
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
+							console.log("Query -> " + JSON.stringify(query));
+							console.log("PagingOptions ->" +  JSON.stringify(pagingOptions));
 							resolve(resultSet);
 						} else if (error) {
 							reject(new Error(error));

@@ -7,7 +7,7 @@ const PostSchema = mongoose.Schema({
 	slug: String,
 	tags: [{
 		value: String,
-		displayName: String
+		label: String
 	}],
 	date_created: Date,
 	date_updated: Date,
