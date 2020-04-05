@@ -230,7 +230,7 @@ module.exports = {
 			handler(broker) {
 				let drafts = broker.call("v1.posts.count", { query: { is_draft: true } });
 				let totalPosts = broker.call("v1.posts.count", { query: {} });
-				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { id: "Blog" } } } });
+				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { value: "blog" } } } });
 				return Promise.all([drafts, totalPosts, blogPosts])
 					.then((data) => {
 						return [
