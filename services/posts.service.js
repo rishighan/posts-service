@@ -1,5 +1,6 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
+const diffHistory = require("mongoose-diff-history/diffHistory");
 const _ = require("lodash");
 
 console.log(DBService("posts"));
@@ -68,6 +69,8 @@ module.exports = {
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
+							console.log("Query -> " + JSON.stringify(query));
+							console.log("PagingOptions ->" +  JSON.stringify(pagingOptions));
 							resolve(resultSet);
 						} else if (error) {
 							reject(new Error(error));
@@ -112,7 +115,7 @@ module.exports = {
 					page: parseInt(broker.params.pageOffset, 10) || 0,
 					limit: parseInt(broker.params.pageLimit, 10) || Infinity,
 				};
-				let query = { tags: { $elemMatch: { id: broker.params.tagName } }, is_draft: false, is_archived: false };
+				let query = { tags: { $elemMatch: { value: broker.params.tagName } }, is_draft: false, is_archived: false };
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
@@ -132,7 +135,7 @@ module.exports = {
 				tagNames: { type: "array" }
 			},
 			handler(broker) {
-				let queryString = { "tags.id": { $nin: broker.params.tagNames } };
+				let queryString = { "tags.value": { $nin: broker.params.tagNames } };
 				return broker.call("v1.posts.find", { query: queryString })
 					.then((data) => data);
 			}
@@ -227,7 +230,7 @@ module.exports = {
 			handler(broker) {
 				let drafts = broker.call("v1.posts.count", { query: { is_draft: true } });
 				let totalPosts = broker.call("v1.posts.count", { query: {} });
-				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { id: "Blog" } } } });
+				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { value: "blog" } } } });
 				return Promise.all([drafts, totalPosts, blogPosts])
 					.then((data) => {
 						return [
@@ -249,9 +252,20 @@ module.exports = {
 					.finally((response) => response);
 			}
 		},
-		// getDiffHistories: {
-			
-		// },
+		getDiffHistories: {
+			params: {
+				postId: { type: "string" },
+			},
+			async handler(context) {
+				try {
+					const histories = await diffHistory.getDiffs("Post", context.params.postId);
+					return histories;
+				}
+				catch (error) {
+					return error;
+				}	
+			}
+		},
 		update: {
 			cache: {
 				keys: ["title", "content", "excerpt", "tags", "attachment"]
@@ -263,7 +277,7 @@ module.exports = {
 				date_created: { type: "string" },
 				attachment: { type: "array", optional: true },
 				is_draft: { type: "boolean" },
-				is_sticky: { type: "boolean" }, // <- TODO
+				is_sticky: { type: "boolean" },
 				is_archived: { type: "boolean" },
 				content: { type: "string", optional: true },
 				excerpt: { type: "string" },
@@ -271,6 +285,7 @@ module.exports = {
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
+					console.log(broker.params);
 					return Post.updateOne({
 						_id: broker.params.postId
 					},
@@ -285,6 +300,7 @@ module.exports = {
 								attachment: broker.params.attachment,
 								is_draft: broker.params.is_draft,
 								is_archived: broker.params.is_archived,
+								is_sticky: broker.params.is_sticky,
 								content: broker.params.content,
 								excerpt: broker.params.excerpt
 							}

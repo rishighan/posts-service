@@ -27,10 +27,10 @@
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.15",
-    "moleculer": "^0.13.5",
-    "moleculer-db": "^0.8.2",
+    "moleculer": "^0.14.3",
+    "moleculer-web": "^0.9.1",
+    "moleculer-db": "^0.8.5",
     "moleculer-db-adapter-mongoose": "^0.8.2",
-    "moleculer-web": "^0.8.5",
     "mongoose": "^5.7.8",
     "mongoose-diff-history": "^1.6.1",
     "mongoose-paginate": "^5.0.3",

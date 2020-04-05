@@ -1,6 +1,6 @@
 "use strict";
 
-const ApiGateway = require("moleculer-web");	
+const ApiGateway = require("moleculer-web");
 
 module.exports = {
 	name: "api",
@@ -9,6 +9,14 @@ module.exports = {
 	// More info about settings: https://moleculer.services/docs/0.13/moleculer-web.html
 	settings: {
 		port: process.env.PORT || 3060,
+		cors: {
+			origin: "*",
+			methods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
+			allowedHeaders: [],
+			exposedHeaders: [],
+			credentials: false,
+			maxAge: 3600
+		},
 		routes: [{
 			path: "/api",
 			whitelist: [
@@ -20,7 +28,7 @@ module.exports = {
 			"POST /posts/create": "posts.create",
 			"GET /posts/retrieve": "posts.retrieve",
 			"GET /posts/retrieveOne": "posts.retrieveOne",
-			"GET /posts/getDrafts" : "posts.getDrafts",
+			"GET /posts/getDrafts": "posts.getDrafts",
 			"POST /posts/update": "posts.update",
 			"GET /posts/:tagName": "posts.findByTagName",
 			"GET /posts/:tagNames": "posts.fiterPostsByTags",
