@@ -136,10 +136,21 @@ module.exports = {
 				operator: { type: "string" },
 			},
 			handler(broker) {
-				let subQuery = broker.params.operator === "include" ? { $in: broker.params.tagNames } : { $nin: broker.params.tagNames };
-				let queryString = { "tags.value": subQuery };
-				return broker.call("v1.posts.find", { query: queryString })
-					.then((data) => data);
+				let subQuery = broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
+				let queryString = { "tags.value": subQuery, is_draft: false, is_archived: false };
+				let options = {
+					page: parseInt(broker.params.pageOffset, 10),
+					limit: parseInt(broker.params.pageLimit, 10)
+				};
+				return new Promise((resolve, reject) => {
+					return Post.paginate(queryString, options, (error, resultSet) => {
+						if(resultSet) {
+							resolve(resultSet);
+						} else if(error) {
+							reject(new Error(error));
+						}
+					});
+				});
 			}
 		},
 		searchPosts: {
