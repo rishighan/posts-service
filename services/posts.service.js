@@ -132,10 +132,12 @@ module.exports = {
 				keys: ["title", "slug", "content"]
 			},
 			params: {
-				tagNames: { type: "array" }
+				tagNames: { type: "array" },
+				operator: { type: "string" },
 			},
 			handler(broker) {
-				let queryString = { "tags.value": { $nin: broker.params.tagNames } };
+				let subQuery = broker.params.operator === "include" ? { $in: broker.params.tagNames } : { $nin: broker.params.tagNames };
+				let queryString = { "tags.value": subQuery };
 				return broker.call("v1.posts.find", { query: queryString })
 					.then((data) => data);
 			}
