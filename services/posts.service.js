@@ -145,7 +145,7 @@ module.exports = {
 				return new Promise((resolve, reject) => {
 					return Post.paginate(queryString, options, (error, resultSet) => {
 						if(resultSet) {
-							resolve(resultSet);
+							resolve(resultSet.docs);
 						} else if(error) {
 							reject(new Error(error));
 						}
