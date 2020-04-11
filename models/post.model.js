@@ -1,6 +1,7 @@
 let mongoose = require("mongoose");
 const diffHistory = require("mongoose-diff-history/diffHistory");
 let paginate = require("mongoose-paginate");
+const Schema = mongoose.Schema;
 
 const PostSchema = mongoose.Schema({
 	title: String,
@@ -20,6 +21,9 @@ const PostSchema = mongoose.Schema({
 		date_updated: Date
 
 	}],
+	posts_relationships: {
+		related_posts: [{type: Schema.Types.ObjectId, ref: "PostsRelationships"}],
+	},
 	is_sticky: Boolean,
 	is_archived: Boolean,
 	is_draft: Boolean,

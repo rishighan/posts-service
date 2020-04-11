@@ -1,13 +1,13 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
+const PostsRelationships = require('../models/posts_relationships.model');
 const diffHistory = require("mongoose-diff-history/diffHistory");
 const _ = require("lodash");
 
-console.log(DBService("posts"));
 module.exports = {
 	name: "posts",
 	version: 1,
-	mixins: [DBService("posts")],
+	mixins: [DBService("posts", Post)],
 	actions: {
 		create: {
 			cache: {
