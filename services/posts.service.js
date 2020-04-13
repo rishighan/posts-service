@@ -1,6 +1,7 @@
 const DBService = require("../mixins/db.mixin");
 const Post = require("../models/post.model");
-const PostsRelationships = require('../models/posts_relationships.model');
+const Series = require("../models/series.model");
+const mongoose = require("mongoose");
 const diffHistory = require("mongoose-diff-history/diffHistory");
 const _ = require("lodash");
 
@@ -9,9 +10,66 @@ module.exports = {
 	version: 1,
 	mixins: [DBService("posts", Post)],
 	actions: {
+		findSeries: {
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					Series.findOne(
+						{
+							series_name: broker.params.series_name,
+						},
+						(error, data) => {
+							if (data) {
+								resolve(data);
+							} else {
+								reject(new Error(error));
+							}
+						}
+					);
+				});
+			},
+		},
+		retrieveSeries: {
+			handler(broker) {
+				const paginationOptions = {
+					pageOffset: broker.params.pageOffset,
+					pageLimit: broker.params.pageLimit,
+				};
+				return new Promise((resolve, reject) => {
+					return Series.paginate({}, paginationOptions, (error, resultSet) => {
+						if(resultSet) {
+							resolve(resultSet);
+						} else {
+							reject(new Error(error));
+						}
+					});
+				});
+			}
+		},
+		createSeries: {
+			params: {
+				series_name: { type: "string"},
+				post: { type: "array" }
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					_.each(broker.params.post, id => {
+						new mongoose.Types.ObjectId(id);
+					});
+					console.log(broker.params);
+					Series.create(broker.params, (error, data) => {
+						if(data) {
+							resolve(data);
+						} else {
+							reject(new Error(error));
+						}
+					});
+				});
+			}
+		},
+
 		create: {
 			cache: {
-				keys: []
+				keys: [],
 			},
 			params: {
 				title: { type: "string" },
@@ -19,16 +77,19 @@ module.exports = {
 				tags: { type: "array", optional: true },
 				attachment: { type: "array", optional: true },
 				is_draft: { type: "boolean" },
-				is_sticky: { type: "boolean" }, // <- TODO
+				is_sticky: { type: "boolean" },
 				is_archived: { type: "boolean" },
 				content: { type: "string", optional: true },
 				excerpt: { type: "string" },
 			},
 			handler(broker) {
-				let postData = Object.assign({
-					date_created: new Date(),
-					date_updated: new Date()
-				}, broker.params);
+				let postData = Object.assign(
+					{
+						date_created: new Date(),
+						date_updated: new Date(),
+					},
+					broker.params
+				);
 				return new Promise((resolve, reject) => {
 					Post.create(postData, (error, data) => {
 						if (data) {
@@ -38,12 +99,11 @@ module.exports = {
 						}
 					});
 				});
-			}
-
+			},
 		},
 		retrieve: {
 			cache: {
-				keys: ["title", "excerpt", "slug", "content"]
+				keys: ["title", "excerpt", "slug", "content"],
 			},
 			params: {
 				_id: { type: "string", optional: true },
@@ -70,14 +130,14 @@ module.exports = {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
 							console.log("Query -> " + JSON.stringify(query));
-							console.log("PagingOptions ->" +  JSON.stringify(pagingOptions));
+							console.log("PagingOptions ->" + JSON.stringify(pagingOptions));
 							resolve(resultSet);
 						} else if (error) {
 							reject(new Error(error));
 						}
 					});
 				});
-			}
+			},
 		},
 		retrieveOne: {
 			cache: {
@@ -98,16 +158,16 @@ module.exports = {
 						}
 					});
 				});
-			}
+			},
 		},
 		findByTagName: {
 			cache: {
-				keys: ["title", "slug", "content"]
+				keys: ["title", "slug", "content"],
 			},
 			params: {
 				tagName: { type: "string" },
 				pageOffset: { type: "string", optional: true },
-				pageLimit: { type: "string", optional: true }
+				pageLimit: { type: "string", optional: true },
 			},
 			handler(broker) {
 				let pagingOptions = {
@@ -115,7 +175,11 @@ module.exports = {
 					page: parseInt(broker.params.pageOffset, 10) || 0,
 					limit: parseInt(broker.params.pageLimit, 10) || Infinity,
 				};
-				let query = { tags: { $elemMatch: { value: broker.params.tagName } }, is_draft: false, is_archived: false };
+				let query = {
+					tags: { $elemMatch: { value: broker.params.tagName } },
+					is_draft: false,
+					is_archived: false,
+				};
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
@@ -125,47 +189,52 @@ module.exports = {
 						}
 					});
 				});
-			}
+			},
 		},
 		filterPostsByTags: {
 			cache: {
-				keys: ["title", "slug", "content"]
+				keys: ["title", "slug", "content"],
 			},
 			params: {
 				tagNames: { type: "array" },
 				operator: { type: "string" },
 			},
 			handler(broker) {
-				let subQuery = broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
-				let queryString = { "tags.value": subQuery, is_draft: false, is_archived: false };
+				let subQuery =
+          		broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
+				let queryString = {
+					"tags.value": subQuery,
+					is_draft: false,
+					is_archived: false,
+				};
 				let options = {
 					page: parseInt(broker.params.pageOffset, 10),
-					limit: parseInt(broker.params.pageLimit, 10)
+					limit: parseInt(broker.params.pageLimit, 10),
 				};
 				return new Promise((resolve, reject) => {
 					return Post.paginate(queryString, options, (error, resultSet) => {
-						if(resultSet) {
+						if (resultSet) {
 							resolve(resultSet.docs);
-						} else if(error) {
+						} else if (error) {
 							reject(new Error(error));
 						}
 					});
 				});
-			}
+			},
 		},
 		searchPosts: {
 			cache: {
-				keys: ["title", "excerpt"]
+				keys: ["title", "excerpt"],
 			},
 			params: {
 				searchTerm: { type: "string" },
 				pageOffset: { type: "string" },
-				pageLimit: { type: "string" }
+				pageLimit: { type: "string" },
 			},
 			handler(broker) {
 				let options = {
 					page: parseInt(broker.params.pageOffset, 10),
-					limit: parseInt(broker.params.pageLimit, 10)
+					limit: parseInt(broker.params.pageLimit, 10),
 				};
 				let query = { $text: { $search: broker.params.searchTerm } };
 				return new Promise((resolve, reject) => {
@@ -177,44 +246,46 @@ module.exports = {
 						}
 					});
 				});
-			}
+			},
 		},
 		getArchivedPosts: {
 			cache: {
-				keys: ["title", "slug"]
+				keys: ["title", "slug"],
 			},
 			handler() {
 				return new Promise((resolve, reject) => {
-					return Post.aggregate([
-						{
-							$match: {
-								is_archived: true
-							}
-						},
-						{
-							$group: {
-								_id: {
-									year: { $year: "$date_created" },
-									month: { $month: "$date_created" }
+					return Post.aggregate(
+						[
+							{
+								$match: {
+									is_archived: true,
 								},
-								archivedPosts: {
-									$push: {
-										title: "$title",
-										slug: "$slug",
-										date_updated: "$date_updated",
-									}
-								}
+							},
+							{
+								$group: {
+									_id: {
+										year: { $year: "$date_created" },
+										month: { $month: "$date_created" },
+									},
+									archivedPosts: {
+										$push: {
+											title: "$title",
+											slug: "$slug",
+											date_updated: "$date_updated",
+										},
+									},
+								},
+							},
+						],
+						(err, data) => {
+							if (err) {
+								reject(err);
 							}
-						}],
-					(err, data) => {
-						if (err) {
-							reject(err);
+							resolve(data);
 						}
-						resolve(data);
-					}
 					);
 				});
-			}
+			},
 		},
 		getDrafts: {
 			cache: {
@@ -223,7 +294,7 @@ module.exports = {
 			handler(context) {
 				const options = {
 					page: parseInt(context.params.pageOffset, 10),
-					limit: parseInt(context.params.pageLimit, 10)
+					limit: parseInt(context.params.pageLimit, 10),
 				};
 				const query = { is_draft: true };
 				return new Promise((resolve, reject) => {
@@ -234,16 +305,20 @@ module.exports = {
 						resolve(resultSet);
 					});
 				});
-			}
+			},
 		},
 		getStatistics: {
 			cache: {
-				keys: ["title", "excerpt"]
+				keys: ["title", "excerpt"],
 			},
 			handler(broker) {
-				let drafts = broker.call("v1.posts.count", { query: { is_draft: true } });
+				let drafts = broker.call("v1.posts.count", {
+					query: { is_draft: true },
+				});
 				let totalPosts = broker.call("v1.posts.count", { query: {} });
-				let blogPosts = broker.call("v1.posts.count", { query: { tags: { $elemMatch: { value: "blog" } } } });
+				let blogPosts = broker.call("v1.posts.count", {
+					query: { tags: { $elemMatch: { value: "blog" } } },
+				});
 				return Promise.all([drafts, totalPosts, blogPosts])
 					.then((data) => {
 						return [
@@ -258,12 +333,12 @@ module.exports = {
 							{
 								key: "Total",
 								count: data[1],
-							}
+							},
 						];
 					})
 					.catch((error) => error)
 					.finally((response) => response);
-			}
+			},
 		},
 		getDiffHistories: {
 			params: {
@@ -271,17 +346,19 @@ module.exports = {
 			},
 			async handler(context) {
 				try {
-					const histories = await diffHistory.getDiffs("Post", context.params.postId);
+					const histories = await diffHistory.getDiffs(
+						"Post",
+						context.params.postId
+					);
 					return histories;
-				}
-				catch (error) {
+				} catch (error) {
 					return error;
-				}	
-			}
+				}
+			},
 		},
 		update: {
 			cache: {
-				keys: ["title", "content", "excerpt", "tags", "attachment"]
+				keys: ["title", "content", "excerpt", "tags", "attachment"],
 			},
 			params: {
 				title: { type: "string" },
@@ -294,17 +371,18 @@ module.exports = {
 				is_archived: { type: "boolean" },
 				content: { type: "string", optional: true },
 				excerpt: { type: "string" },
-				upsertValue: { type: "boolean" }
+				upsertValue: { type: "boolean" },
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					console.log(broker.params);
-					return Post.updateOne({
-						_id: broker.params.postId
-					},
-					{
-						$set:
-							{
+					return Post.updateOne(
+						{
+							_id: broker.params.postId,
+						},
+						{
+							$set: {
+								series_name: broker.params.series_name,
+								series: broker.params.series,
 								title: broker.params.title,
 								slug: broker.params.slug,
 								tags: broker.params.tags,
@@ -315,26 +393,27 @@ module.exports = {
 								is_archived: broker.params.is_archived,
 								is_sticky: broker.params.is_sticky,
 								content: broker.params.content,
-								excerpt: broker.params.excerpt
+								excerpt: broker.params.excerpt,
+							},
+						},
+						{
+							upsert: broker.params.upsertValue,
+						},
+						(error, data) => {
+							if (data) {
+								resolve(data);
+							} else if (error) {
+								reject(new Error(error));
 							}
-					},
-					{
-						upsert: broker.params.upsertValue
-					},
-					(error, data) => {
-						if (data) {
-							resolve(data);
-						} else if (error) {
-							reject(new Error(error));
 						}
-					});
+					);
 				});
-			}
+			},
 		},
 		delete: {
 			cache: {},
 			params: {
-				postId: { type: "string" }
+				postId: { type: "string" },
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
@@ -346,19 +425,31 @@ module.exports = {
 						}
 					});
 				});
-			}
-		}
+			},
+		},
 	},
 	settings: {
 		model: Post,
-		fields: ["_id", "slug", "tags", "date_created", "date_updated", "attachment", "is_sticky", "is_archived", "is_draft", "content", "excerpt"],
+		fields: [
+			"_id",
+			"slug",
+			"tags",
+			"date_created",
+			"date_updated",
+			"attachment",
+			"is_sticky",
+			"is_archived",
+			"is_draft",
+			"content",
+			"excerpt",
+		],
 		entityValidator: {
 			title: { type: "string", min: 1 },
 			slug: { type: "string", optional: true },
 			content: { type: "string", optional: true },
 			attachment: { type: "string", items: "object", optional: true },
 			tags: { type: "array", items: "string", optional: true },
-			excerpt: { type: "string", optional: true }
-		}
-	}
+			excerpt: { type: "string", optional: true },
+		},
+	},
 };

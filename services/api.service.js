@@ -36,7 +36,7 @@ module.exports = {
 			"GET /posts/getStatistics": "posts.getStatistics",
 			"GET /posts/getDiffHistories": "posts.getDiffHistories",
 			"GET /posts/getArchivedPosts": "posts.getArchivedPosts",
-			"POST /posts/delete": "posts.delete"
+			"POST /posts/delete": "posts.delete",
 		},
 		// Parse body content
 		bodyParsers: {

@@ -1,8 +1,8 @@
-let mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const diffHistory = require("mongoose-diff-history/diffHistory");
-let paginate = require("mongoose-paginate");
-const Schema = mongoose.Schema;
+const paginate = require("mongoose-paginate");
 
+// Post model
 const PostSchema = mongoose.Schema({
 	title: String,
 	slug: String,
@@ -21,9 +21,6 @@ const PostSchema = mongoose.Schema({
 		date_updated: Date
 
 	}],
-	posts_relationships: {
-		related_posts: [{type: Schema.Types.ObjectId, ref: "PostsRelationships"}],
-	},
 	is_sticky: Boolean,
 	is_archived: Boolean,
 	is_draft: Boolean,
@@ -33,8 +30,7 @@ const PostSchema = mongoose.Schema({
 
 // pagination
 PostSchema.plugin(paginate);
-
-// diff history
+// Diff history
 PostSchema.plugin(diffHistory.plugin);
 
 // indices
@@ -47,6 +43,7 @@ PostSchema.index({
 }, {
 	collation: {locale: "en", strength: 2}
 });
+
 PostSchema.set("autoIndex", false);
 
 const Post = mongoose.model("Post", PostSchema);
