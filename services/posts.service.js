@@ -36,7 +36,7 @@ module.exports = {
 				};
 				return new Promise((resolve, reject) => {
 					return Series.paginate({}, paginationOptions, (error, resultSet) => {
-						if(resultSet) {
+						if (resultSet) {
 							resolve(resultSet);
 						} else {
 							reject(new Error(error));
@@ -47,7 +47,7 @@ module.exports = {
 		},
 		createSeries: {
 			params: {
-				series_name: { type: "string"},
+				series_name: { type: "string" },
 				post: { type: "array" }
 			},
 			handler(broker) {
@@ -57,7 +57,7 @@ module.exports = {
 					});
 					console.log(broker.params);
 					Series.create(broker.params, (error, data) => {
-						if(data) {
+						if (data) {
 							resolve(data);
 						} else {
 							reject(new Error(error));
@@ -66,7 +66,30 @@ module.exports = {
 				});
 			}
 		},
-
+		updateSeries: {
+			params: {},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					Series.updateOne({
+						_id: broker.params._id
+					}, {
+						$set: {
+							series_name: broker.params.series_name,
+							post: broker.params.post,
+						},
+					}, {
+						upsert: false,
+					},
+					(error, data) => {
+						if (data) {
+							resolve(data);
+						} else {
+							reject(new Error(error));
+						}
+					});
+				});
+			}
+		},
 		create: {
 			cache: {
 				keys: [],
@@ -201,7 +224,7 @@ module.exports = {
 			},
 			handler(broker) {
 				let subQuery =
-          		broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
+					broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
 				let queryString = {
 					"tags.value": subQuery,
 					is_draft: false,
@@ -381,8 +404,6 @@ module.exports = {
 						},
 						{
 							$set: {
-								series_name: broker.params.series_name,
-								series: broker.params.series,
 								title: broker.params.title,
 								slug: broker.params.slug,
 								tags: broker.params.tags,
