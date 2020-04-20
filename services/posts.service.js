@@ -28,6 +28,24 @@ module.exports = {
 				});
 			},
 		},
+		findSeriesByPostId: {
+			params: {
+				postId: { type: "string" }
+			},
+			handler(broker) {
+				return new Promise((resolve, reject) => {
+					Series.find({ 
+						"post": { $elemMatch: { $eq: broker.params.postId }}
+					}, (error, data) => {
+						if(data) {
+							resolve(data);
+						} else {
+							reject(new Error(error));
+						}
+					});
+				});	
+			}
+		},
 		retrieveSeries: {
 			handler(broker) {
 				const paginationOptions = {
@@ -43,19 +61,18 @@ module.exports = {
 						}
 					});
 				});
-			}
+			},
 		},
 		createSeries: {
 			params: {
 				series_name: { type: "string" },
-				post: { type: "array" }
+				post: { type: "array" },
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					_.each(broker.params.post, id => {
+					_.each(broker.params.post, (id) => {
 						new mongoose.Types.ObjectId(id);
 					});
-					console.log(broker.params);
 					Series.create(broker.params, (error, data) => {
 						if (data) {
 							resolve(data);
@@ -64,31 +81,44 @@ module.exports = {
 						}
 					});
 				});
-			}
+			},
 		},
 		updateSeries: {
-			params: {},
+			params: { _id: { type: "string" } },
+			handler(broker) {
+				const query = { _id: broker.params._id };
+				return new Promise((resolve, reject) => {
+					Series.findOneAndUpdate(
+						query,
+						broker.params,
+						{ new: true },
+						(error, data) => {
+							if (data) {
+								resolve(data);
+							} else {
+								reject(new Error(error));
+							}
+						}
+					);
+				});
+			},
+		},
+		deleteSeries: {
+			params: { series: { type: "string" } },
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					Series.updateOne({
-						_id: broker.params._id
-					}, {
-						$set: {
-							series_name: broker.params.series_name,
-							post: broker.params.post,
-						},
-					}, {
-						upsert: false,
-					},
-					(error, data) => {
-						if (data) {
-							resolve(data);
-						} else {
-							reject(new Error(error));
+					return Series.findByIdAndDelete(
+						broker.params.seriesId,
+						(error, data) => {
+							if (data) {
+								resolve(data);
+							} else {
+								reject(new Error(error));
+							}
 						}
-					});
+					);
 				});
-			}
+			},
 		},
 		create: {
 			cache: {
@@ -152,8 +182,6 @@ module.exports = {
 				return new Promise((resolve, reject) => {
 					return Post.paginate(query, pagingOptions, (error, resultSet) => {
 						if (resultSet) {
-							console.log("Query -> " + JSON.stringify(query));
-							console.log("PagingOptions ->" + JSON.stringify(pagingOptions));
 							resolve(resultSet);
 						} else if (error) {
 							reject(new Error(error));
@@ -223,8 +251,7 @@ module.exports = {
 				operator: { type: "string" },
 			},
 			handler(broker) {
-				let subQuery =
-					broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
+				let subQuery = broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
 				let queryString = {
 					"tags.value": subQuery,
 					is_draft: false,
