@@ -263,6 +263,7 @@ module.exports = {
 					is_archived: false,
 				};
 				let options = {
+					sort: { date_updated: -1 },
 					page: parseInt(broker.params.pageOffset, 10),
 					limit: parseInt(broker.params.pageLimit, 10),
 				};
