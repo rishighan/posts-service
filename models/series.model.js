@@ -1,14 +1,13 @@
 const mongoose = require("mongoose");
 const paginate = require("mongoose-paginate");
 const autopopulate = require("mongoose-autopopulate");
-const Post = require("./post.model");
 
 // Series model
 const SeriesSchema = mongoose.Schema({
 	series_name: String,
 	post: [{ 
 		type: mongoose.Schema.Types.ObjectId,
-		ref: Post,
+		ref: "Post",
 		autopopulate: true,
 	}],
 });

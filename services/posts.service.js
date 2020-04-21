@@ -30,21 +30,23 @@ module.exports = {
 		},
 		findSeriesByPostId: {
 			params: {
-				postId: { type: "string" }
+				postId: { type: "string" },
 			},
 			handler(broker) {
 				return new Promise((resolve, reject) => {
-					Series.find({ 
-						"post": { $elemMatch: { $eq: broker.params.postId }}
-					}, (error, data) => {
-						if(data) {
-							resolve(data);
-						} else {
-							reject(new Error(error));
+					Series.find(
+						{
+							post: { $elemMatch: { $eq: broker.params.postId } },
+						}, (error, data) => {
+							if (data) {
+								resolve(data);
+							} else {
+								reject(new Error(error));
+							}
 						}
-					});
-				});	
-			}
+					);
+				});
+			},
 		},
 		retrieveSeries: {
 			handler(broker) {
@@ -251,7 +253,10 @@ module.exports = {
 				operator: { type: "string" },
 			},
 			handler(broker) {
-				let subQuery = broker.params.queryDetails.operator === "include" ? { $in: broker.params.queryDetails.tagNames } : { $nin: broker.params.queryDetails.tagNames };
+				let subQuery =
+          broker.params.queryDetails.operator === "include"
+          	? { $in: broker.params.queryDetails.tagNames }
+          	: { $nin: broker.params.queryDetails.tagNames };
 				let queryString = {
 					"tags.value": subQuery,
 					is_draft: false,
