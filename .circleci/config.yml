@@ -38,5 +38,8 @@ jobs:
             bash ./scripts/deploy/deploy.sh -u $DIGITALOCEAN_USERNAME \
                                             -h $DIGITALOCEAN_HOST \
                                             -s $SERVICE_NAME \
-                                            -r $REPOSITORY_BASE_URL 
+                                            -r $REPOSITORY_BASE_URL \
+                                            -d $MONGODB_DATABASE \
+                                            -x $MONGODB_USERNAME \
+                                            -y $MONGODB_PASSWORD
       
