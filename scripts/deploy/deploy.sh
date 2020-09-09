@@ -28,7 +28,7 @@ service_name=''
 hostname=''
 username=''
 
-while getopts 's:h:u:r:b:x:p:' flag; do
+while getopts 'd:s:h:u:r:b:x:p:' flag; do
     case "${flag}" in
         s) service_name="${OPTARG}" ;;
         h) hostname="${OPTARG}" ;;
