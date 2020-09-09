@@ -35,8 +35,8 @@ while getopts 'd:s:h:u:r:b:x:p:' flag; do
         u) username="${OPTARG}" ;;
         r) repository_base_url="${OPTARG}" ;;
         b) mongodb_database="${OPTARG}" ;;
-        x) mongodb_username=${OPTARG} ;;
-        p) mongodb_password=${OPTARG} ;;
+        x) mongodb_username="${OPTARG}" ;;
+        p) mongodb_password="${OPTARG}" ;;
         *) printf "Usage..."
            exit 1 ;;
     esac
