@@ -1,8 +1,12 @@
 version: 2.1
+workflows:
+  deployment:
+    jobs:
+      - build:
+          context:
+              - rishighan
 jobs:
   build:
-    context:
-      - rishighan
     docker:
       - image: "circleci/node:10.16.0"
     steps:
