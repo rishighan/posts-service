@@ -41,5 +41,5 @@ jobs:
                                             -r $REPOSITORY_BASE_URL \
                                             -d $MONGODB_DATABASE \
                                             -x $MONGODB_USERNAME \
-                                            -y $MONGODB_PASSWORD
+                                            -p $MONGODB_PASSWORD
       
