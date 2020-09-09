@@ -39,7 +39,7 @@ jobs:
                                             -h $DIGITALOCEAN_HOST \
                                             -s $SERVICE_NAME \
                                             -r $REPOSITORY_BASE_URL \
-                                            -d $MONGODB_DATABASE \
+                                            -b $MONGODB_DATABASE \
                                             -x $MONGODB_USERNAME \
                                             -p $MONGODB_PASSWORD
       

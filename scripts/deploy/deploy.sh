@@ -28,13 +28,13 @@ service_name=''
 hostname=''
 username=''
 
-while getopts 'd:s:h:u:r:' flag; do
+while getopts 'd:s:h:u:r:b:x:p:' flag; do
     case "${flag}" in
         s) service_name="${OPTARG}" ;;
         h) hostname="${OPTARG}" ;;
         u) username="${OPTARG}" ;;
         r) repository_base_url="${OPTARG}" ;;
-        d) mongodb_database="${OPTARG}" ;;
+        b) mongodb_database="${OPTARG}" ;;
         x) mongodb_username=${OPTARG} ;;
         p) mongodb_password=${OPTARG} ;;
         *) printf "Usage..."
