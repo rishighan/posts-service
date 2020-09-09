@@ -1,10 +1,5 @@
 version: 2.1
-workflows:
-  deployment:
-    jobs:
-      - build:
-          context:
-              - rishighan
+
 jobs:
   build:
     docker:
@@ -14,20 +9,20 @@ jobs:
       - run:
           name: Update to latest npm version
           command: "sudo npm install -g npm@latest"
-      - restore_cache: 
+      - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
           command: npm install
       - setup_remote_docker:
-          docker_layer_caching: false 
+          docker_layer_caching: false
       - run:
           name: Build using `docker-compose`
           command: |
             docker-compose build
       - run:
           name: Login for Docker Hub
-          command: | 
+          command: |
             echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
       - run:
           name: Push to Docker Hub
@@ -48,4 +43,3 @@ jobs:
                                             -b $MONGODB_DATABASE \
                                             -x $MONGODB_USERNAME \
                                             -p $MONGODB_PASSWORD
-      
