@@ -42,13 +42,15 @@ services:
       - gateway 
   
   mongo:
-    image: mongo
+    image: bitnami/mongodb
     container_name: db
     restart: always
+    environment: 
+      - docker-compose.env
     ports:
       - "27017:27017"
     volumes:
-      - /usr/local/var/mongodb/:/data/db
+      - /usr/local/var/mongodb/:/bitnami/mongodb
     labels:
       - traefik.enable=false
     networks:
