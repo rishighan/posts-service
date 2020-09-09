@@ -1,7 +1,8 @@
 version: 2.1
 jobs:
   build:
-    context: 'rishighan'
+    context:
+      - rishighan
     docker:
       - image: "circleci/node:10.16.0"
     steps:
