@@ -69,9 +69,9 @@ fi
     curl "$repository_base_url"/docker-compose.env --output docker-compose.env
 
     printf "Writing Mongo configuration to docker-compose.env... \n"
-    echo -e "MONGODB_DATABASE=$mongodb_database"
-    echo -e "MONGODB_USERNAME=$mongodb_username"
-    echo -e "MONGODB_PASSWORD=$mongodb_password"
+    echo -e "MONGODB_DATABASE=$mongodb_database" >> docker-compose.env
+    echo -e "MONGODB_USERNAME=$mongodb_username" >> docker-compose.env
+    echo -e "MONGODB_PASSWORD=$mongodb_password" >> docker-compose.env
     
     printf "\n$BROOM Stopping and removing containers and volumes...\n\n"
     docker-compose down -v
