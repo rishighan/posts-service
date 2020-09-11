@@ -45,8 +45,7 @@ services:
     image: bitnami/mongodb
     container_name: db
     restart: always
-    environment: 
-      - docker-compose.env
+    env_file: docker-compose.env
     ports:
       - "27017:27017"
     volumes:

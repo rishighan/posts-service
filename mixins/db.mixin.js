@@ -7,7 +7,11 @@ module.exports = (collection, model)  => {
 	if(process.env.MONGO_URI) {
 		return {
 			mixins: [DbService],
-			adapter: new MongoAdapter(process.env.MONGO_URI),
+			adapter: new MongoAdapter(process.env.MONGO_URI, {
+				user: process.env.MONGODB_USERNAME,
+				pass: process.env.MONGODB_PASSWORD,
+				keepAlive: true,
+			}),
 			model: model,
 			collection    
 		};
