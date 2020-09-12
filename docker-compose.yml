@@ -12,9 +12,9 @@ services:
       PORT: 5000
     depends_on: 
       - mongo
-      - caddy
     external_links:
       - nats
+      - caddy
     networks:
       - gateway 
 
@@ -30,6 +30,7 @@ services:
       - mongo
     external_links:
       - nats
+      - caddy
     networks:
       - gateway 
   
