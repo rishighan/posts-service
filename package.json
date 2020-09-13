@@ -5,7 +5,7 @@
     "url": "https://google.com"
   },
   "license": "ISC",
-  "description": "My Moleculer project",
+  "description": "Posts microservice for rishighan.com",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services",
     "start": "moleculer-runner services",
