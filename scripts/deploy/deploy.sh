@@ -28,15 +28,12 @@ service_name=''
 hostname=''
 username=''
 
-while getopts 'd:s:h:u:r:b:x:p:' flag; do
+while getopts 'd:s:h:u:r:' flag; do
     case "${flag}" in
         s) service_name="${OPTARG}" ;;
         h) hostname="${OPTARG}" ;;
         u) username="${OPTARG}" ;;
         r) repository_base_url="${OPTARG}" ;;
-        b) mongodb_database="${OPTARG}" ;;
-        x) mongodb_username="${OPTARG}" ;;
-        p) mongodb_password="${OPTARG}" ;;
         *) printf "Usage..."
            exit 1 ;;
     esac
@@ -67,9 +64,6 @@ fi
     curl "$repository_base_url"/Dockerfile --output Dockerfile
     curl "$repository_base_url"/docker-compose.yml --output docker-compose.yml
     curl "$repository_base_url"/docker-compose.env --output docker-compose.env
-
-    printf "Writing Mongo configuration to docker-compose.env... \n"
-    echo -e "MONGODB_DATABASE=$mongodb_database" >> docker-compose.env
     
     printf "\n$BROOM Stopping and removing containers and volumes...\n\n"
     docker-compose down -v
