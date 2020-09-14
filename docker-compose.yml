@@ -10,9 +10,8 @@ services:
     environment:
       SERVICES: api
       PORT: 5000
-    depends_on: 
-      - mongo
     external_links:
+      - mongo
       - nats
       - caddy
     networks:
