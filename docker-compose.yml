@@ -25,10 +25,9 @@ services:
     env_file: docker-compose.env
     environment:
       SERVICES: posts
-    depends_on: 
-      - mongo
     external_links:
       - nats
+      - mongo
       - caddy
     networks:
       - main-network 
