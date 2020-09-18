@@ -8,8 +8,8 @@ module.exports = (collection, model)  => {
 		return {
 			mixins: [DbService],
 			adapter: new MongoAdapter(process.env.MONGO_URI, {
-				user: process.env.MONGODB_USERNAME,
-				pass: process.env.MONGODB_PASSWORD,
+				user: process.env.MONGO_INITDB_ROOT_USERNAME,
+				pass: process.env.MONGO_INITDB_ROOT_PASSWORD,
 				keepAlive: true,
 			}),
 			model: model,
