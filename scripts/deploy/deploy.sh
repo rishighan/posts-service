@@ -28,12 +28,14 @@ service_name=''
 hostname=''
 username=''
 
-while getopts 'd:s:h:u:r:' flag; do
+while getopts 'd:s:h:u:r:m:o:' flag; do
     case "${flag}" in
         s) service_name="${OPTARG}" ;;
         h) hostname="${OPTARG}" ;;
         u) username="${OPTARG}" ;;
         r) repository_base_url="${OPTARG}" ;;
+        m) mongodb_username="${OPTARG}" ;;
+        o) mongodb_password="${OPTARG}" ;;
         *) printf "Usage..."
            exit 1 ;;
     esac
@@ -59,12 +61,19 @@ fi
     printf "\n$SCISSORS  Pruning Docker images, networks and volumes...\n\n"
     docker system prune -f
 
-    printf "$DOWNLOAD Downloading the docker-compose configuration for Posts Service...\n\n"
+    printf "$DOWNLOAD Downloading the docker-compose configuration for $service_name...\n\n"
     printf "$repository_base_url\n\n"
     curl "$repository_base_url"/Dockerfile --output Dockerfile
     curl "$repository_base_url"/docker-compose.yml --output docker-compose.yml
     curl "$repository_base_url"/docker-compose.env --output docker-compose.env
-    
+
+    printf "$DOWNLOAD Downloading the docker-compose environment variables for mongo...\n\n"
+    echo -e "\n" >> docker-compose.env
+    echo -e "MONGO_INITDB_ROOT_USERNAME=$mongodb_username" >> docker-compose.env
+    echo -e "MONGO_INITDB_ROOT_PASSWORD=$mongodb_password" >> docker-compose.env
+
+
+
     printf "\n$BROOM Stopping and removing containers and volumes...\n\n"
     docker-compose down -v
     

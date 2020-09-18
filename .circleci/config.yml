@@ -40,3 +40,5 @@ jobs:
                                             -h $DIGITALOCEAN_HOST \
                                             -s $SERVICE_NAME \
                                             -r $REPOSITORY_BASE_URL
+                                            -m $MONGO_INITDB_ROOT_USERNAME
+                                            -o $MONGO_INITDB_ROOT_PASSWORD
